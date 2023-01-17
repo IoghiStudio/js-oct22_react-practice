@@ -222,31 +222,34 @@ export const App: React.FC = () => {
             </thead>
 
             <tbody>
-              {products.map(product => (
-                <tr data-cy="Product">
-                  <td className="has-text-weight-bold" data-cy="ProductId">
-                    {product.id}
-                  </td>
+              {products.map(product => {
+                const { id, name, category } = product;
 
-                  <td data-cy="ProductName">{product.name}</td>
-                  <td data-cy="ProductCategory">
-                    {product.category?.icon}
-                    {' - '}
-                    {product.category?.title}
-                  </td>
+                return (
+                  <tr data-cy="Product">
+                    <td className="has-text-weight-bold" data-cy="ProductId">
+                      {id}
+                    </td>
 
-                  <td
-                    data-cy="ProductUser"
-                    // className="has-text-link"
-                    className={cn({
-                      'has-text-danger': product.category?.owner?.sex === 'f',
-                      'has-text-link': product.category?.owner?.sex === 'm',
-                    })}
-                  >
-                    {product.category?.owner?.name}
-                  </td>
-                </tr>
-              ))}
+                    <td data-cy="ProductName">{name}</td>
+                    <td data-cy="ProductCategory">
+                      {category?.icon}
+                      {' - '}
+                      {category?.title}
+                    </td>
+
+                    <td
+                      data-cy="ProductUser"
+                      className={cn({
+                        'has-text-danger': category?.owner?.sex === 'f',
+                        'has-text-link': category?.owner?.sex === 'm',
+                      })}
+                    >
+                      {product.category?.owner?.name}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
