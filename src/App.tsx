@@ -43,6 +43,18 @@ export const App: React.FC = () => {
   const [filterCategory, setFilterCategory] = useState<string[]>([]);
   const [searchField, setSearchField] = useState('');
 
+  const [sortId, setSortId] = useState(1);
+  const [sortProduct, setSortProduct] = useState(1);
+  const [sortCategory, setSortCategory] = useState(1);
+  const [sortUser, setSortUser] = useState(1);
+
+  const resetAllSorts = () => {
+    setSortId(1);
+    setSortProduct(1);
+    setSortCategory(1);
+    setSortUser(1);
+  };
+
   let visibleProducts = products;
 
   if (activeUser !== null) {
@@ -64,6 +76,16 @@ export const App: React.FC = () => {
         return product.category?.title === filter;
       });
     }
+  }
+
+  if (sortProduct === 2) {
+    visibleProducts = visibleProducts
+      .sort((prev, curr) => prev.name.localeCompare(curr.name));
+  }
+
+  if (sortProduct === 3) {
+    visibleProducts = visibleProducts
+      .sort((prev, curr) => curr.name.localeCompare(prev.name));
   }
 
   return (
@@ -114,7 +136,9 @@ export const App: React.FC = () => {
                   placeholder="Search"
                   value={searchField}
                   onChange={(event) => {
-                    setSearchField(event.target.value);
+                    const text = event.target.value.toLowerCase();
+
+                    setSearchField(text);
                   }}
                 />
 
@@ -220,9 +244,31 @@ export const App: React.FC = () => {
                   <span className="is-flex is-flex-wrap-nowrap">
                     ID
 
-                    <a href="#/">
-                      <span className="icon">
-                        <i data-cy="SortIcon" className="fas fa-sort" />
+                    <a
+                      href="#/"
+                      onClick={() => {
+                        resetAllSorts();
+                        if (sortId === 3) {
+                          setSortId(1);
+                        } else {
+                          setSortId(sortId + 1);
+                        }
+                      }}
+                    >
+                      <span
+                        className="icon"
+                      >
+                        <i
+                          data-cy="SortIcon"
+                          className={cn(
+                            'fas',
+                            {
+                              'fa-sort': sortId === 1,
+                              'fa-sort-up': sortId === 2,
+                              'fa-sort-down': sortId === 3,
+                            },
+                          )}
+                        />
                       </span>
                     </a>
                   </span>
@@ -232,9 +278,29 @@ export const App: React.FC = () => {
                   <span className="is-flex is-flex-wrap-nowrap">
                     Product
 
-                    <a href="#/">
+                    <a
+                      href="#/"
+                      onClick={() => {
+                        resetAllSorts();
+                        if (sortProduct === 3) {
+                          setSortProduct(1);
+                        } else {
+                          setSortProduct(sortProduct + 1);
+                        }
+                      }}
+                    >
                       <span className="icon">
-                        <i data-cy="SortIcon" className="fas fa-sort-down" />
+                        <i
+                          data-cy="SortIcon"
+                          className={cn(
+                            'fas',
+                            {
+                              'fa-sort': sortProduct === 1,
+                              'fa-sort-up': sortProduct === 2,
+                              'fa-sort-down': sortProduct === 3,
+                            },
+                          )}
+                        />
                       </span>
                     </a>
                   </span>
@@ -244,9 +310,29 @@ export const App: React.FC = () => {
                   <span className="is-flex is-flex-wrap-nowrap">
                     Category
 
-                    <a href="#/">
+                    <a
+                      href="#/"
+                      onClick={() => {
+                        resetAllSorts();
+                        if (sortCategory === 3) {
+                          setSortCategory(1);
+                        } else {
+                          setSortCategory(sortCategory + 1);
+                        }
+                      }}
+                    >
                       <span className="icon">
-                        <i data-cy="SortIcon" className="fas fa-sort-up" />
+                        <i
+                          data-cy="SortIcon"
+                          className={cn(
+                            'fas',
+                            {
+                              'fa-sort': sortCategory === 1,
+                              'fa-sort-up': sortCategory === 2,
+                              'fa-sort-down': sortCategory === 3,
+                            },
+                          )}
+                        />
                       </span>
                     </a>
                   </span>
@@ -256,9 +342,29 @@ export const App: React.FC = () => {
                   <span className="is-flex is-flex-wrap-nowrap">
                     User
 
-                    <a href="#/">
+                    <a
+                      href="#/"
+                      onClick={() => {
+                        resetAllSorts();
+                        if (sortUser === 3) {
+                          setSortUser(1);
+                        } else {
+                          setSortUser(sortUser + 1);
+                        }
+                      }}
+                    >
                       <span className="icon">
-                        <i data-cy="SortIcon" className="fas fa-sort" />
+                        <i
+                          data-cy="SortIcon"
+                          className={cn(
+                            'fas',
+                            {
+                              'fa-sort': sortUser === 1,
+                              'fa-sort-up': sortUser === 2,
+                              'fa-sort-down': sortUser === 3,
+                            },
+                          )}
+                        />
                       </span>
                     </a>
                   </span>
