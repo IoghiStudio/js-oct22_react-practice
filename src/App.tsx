@@ -5,7 +5,7 @@ import cn from 'classnames';
 
 // import { Category } from './types/category';
 // import { Product } from './types/product';
-// import { User } from './types/user';
+import { User } from './types/user';
 
 import usersFromServer from './api/users';
 import productsFromServer from './api/products';
@@ -37,16 +37,15 @@ const productsList = productsFromServer.map(product => {
 });
 
 export const App: React.FC = () => {
-  const [products, setProducts] = useState(productsList);
+  const [products] = useState(productsList);
   const [users] = useState(usersFromServer);
-  const [activeUser, setActiveUser] = useState(users[users.length]);
-  const [filterByAll, setFilterByAll] = useState(true);
+  const [activeUser, setActiveUser] = useState<null | User>(null);
 
   let visibleProducts = products;
 
-  if (activeUser !== users[users.length]) {
+  if (activeUser !== null) {
     visibleProducts = products.filter(product => {
-      return product.category?.owner?.id === activeUser.id;
+      return product.category?.owner === activeUser;
     });
   }
 
@@ -64,11 +63,10 @@ export const App: React.FC = () => {
                 data-cy="FilterAllUsers"
                 href="#/"
                 className={cn({
-                  'is-active': filterByAll === true,
+                  'is-active': activeUser === null,
                 })}
                 onClick={() => {
-                  setFilterByAll(true);
-                  setActiveUser(users[users.length]);
+                  setActiveUser(null);
                 }}
               >
                 All
@@ -83,7 +81,6 @@ export const App: React.FC = () => {
                   })}
                   onClick={() => {
                     setActiveUser(user);
-                    setFilterByAll(false);
                   }}
                 >
                   {user.name}
