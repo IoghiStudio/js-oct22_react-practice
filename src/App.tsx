@@ -1,10 +1,11 @@
+/* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable no-console */
 import React, { useState } from 'react';
 import './App.scss';
 import cn from 'classnames';
 
-// import { Category } from './types/category';
 // import { Product } from './types/product';
+// import { Category } from './types/category';
 import { User } from './types/user';
 
 import usersFromServer from './api/users';
@@ -15,7 +16,7 @@ const findByOwnerId = (id: number) => {
   return usersFromServer.find(user => user.id === id);
 };
 
-const categories = categoriesFromServer.map(category => {
+const categoriesList = categoriesFromServer.map(category => {
   return {
     id: category.id,
     title: category.title,
@@ -25,7 +26,7 @@ const categories = categoriesFromServer.map(category => {
 });
 
 const findByCategoryId = (id: number) => {
-  return categories.find(category => category.id === id);
+  return categoriesList.find(category => category.id === id);
 };
 
 const productsList = productsFromServer.map(product => {
@@ -39,13 +40,22 @@ const productsList = productsFromServer.map(product => {
 export const App: React.FC = () => {
   const [products] = useState(productsList);
   const [users] = useState(usersFromServer);
+  const [categories] = useState(categoriesList);
   const [activeUser, setActiveUser] = useState<null | User>(null);
+  // const [filterCategory, setFilterCategory] = useState<null | Category>(null);
+  const [searchField, setSearchField] = useState('');
 
   let visibleProducts = products;
 
   if (activeUser !== null) {
     visibleProducts = products.filter(product => {
       return product.category?.owner === activeUser;
+    });
+  }
+
+  if (searchField) {
+    visibleProducts = visibleProducts.filter(product => {
+      return product.name.toLowerCase().includes(searchField);
     });
   }
 
@@ -95,7 +105,10 @@ export const App: React.FC = () => {
                   type="text"
                   className="input"
                   placeholder="Search"
-                  value="qwe"
+                  value={searchField}
+                  onChange={(event) => {
+                    setSearchField(event.target.value);
+                  }}
                 />
 
                 <span className="icon is-left">
@@ -103,12 +116,19 @@ export const App: React.FC = () => {
                 </span>
 
                 <span className="icon is-right">
-                  {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                  <button
-                    data-cy="ClearButton"
-                    type="button"
-                    className="delete"
-                  />
+                  {searchField
+                    ? (
+                      <button
+                        data-cy="ClearButton"
+                        type="button"
+                        className="delete"
+                        onClick={() => {
+                          setSearchField('');
+                        }}
+                      />
+                    ) : (
+                      ''
+                    )}
                 </span>
               </p>
             </div>
@@ -121,37 +141,18 @@ export const App: React.FC = () => {
               >
                 All
               </a>
-
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1 is-info"
-                href="#/"
-              >
-                Category 1
-              </a>
-
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1"
-                href="#/"
-              >
-                Category 2
-              </a>
-
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1 is-info"
-                href="#/"
-              >
-                Category 3
-              </a>
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1"
-                href="#/"
-              >
-                Category 4
-              </a>
+              {categories.map(category => {
+                return (
+                  <a
+                    key={category.id}
+                    data-cy="Category"
+                    className="button mr-2 my-1 is-info"
+                    href="#/"
+                  >
+                    {category.title}
+                  </a>
+                );
+              })}
             </div>
 
             <div className="panel-block">
