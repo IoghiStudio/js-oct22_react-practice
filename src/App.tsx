@@ -4,8 +4,6 @@ import React, { useState } from 'react';
 import './App.scss';
 import cn from 'classnames';
 
-// import { Product } from './types/product';
-// import { Category } from './types/category';
 import { User } from './types/user';
 
 import usersFromServer from './api/users';
@@ -42,7 +40,7 @@ export const App: React.FC = () => {
   const [users] = useState(usersFromServer);
   const [categories] = useState(categoriesList);
   const [activeUser, setActiveUser] = useState<null | User>(null);
-  // const [filterCategory, setFilterCategory] = useState<null | Category>(null);
+  const [filterCategory, setFilterCategory] = useState<string[]>([]);
   const [searchField, setSearchField] = useState('');
 
   let visibleProducts = products;
@@ -57,6 +55,15 @@ export const App: React.FC = () => {
     visibleProducts = visibleProducts.filter(product => {
       return product.name.toLowerCase().includes(searchField);
     });
+  }
+
+  if (filterCategory.length) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const filter of filterCategory) {
+      visibleProducts = visibleProducts.filter(product => {
+        return product.category?.title === filter;
+      });
+    }
   }
 
   return (
@@ -137,7 +144,15 @@ export const App: React.FC = () => {
               <a
                 href="#/"
                 data-cy="AllCategories"
-                className="button is-success mr-6 is-outlined"
+                className={cn(
+                  'button is-success mr-6',
+                  {
+                    'is-outlined': filterCategory.length,
+                  },
+                )}
+                onClick={() => {
+                  setFilterCategory([]);
+                }}
               >
                 All
               </a>
@@ -146,8 +161,24 @@ export const App: React.FC = () => {
                   <a
                     key={category.id}
                     data-cy="Category"
-                    className="button mr-2 my-1 is-info"
+                    className={cn(
+                      'button mr-2 my-1',
+                      {
+                        'is-info': filterCategory?.includes(category.title),
+                      },
+                    )}
                     href="#/"
+                    onClick={() => {
+                      if (filterCategory.includes(category.title)) {
+                        setFilterCategory(c => c
+                          .filter(title => title !== category.title));
+                      } else {
+                        setFilterCategory(c => ([
+                          ...c,
+                          category.title,
+                        ]));
+                      }
+                    }}
                   >
                     {category.title}
                   </a>
@@ -163,6 +194,7 @@ export const App: React.FC = () => {
                 onClick={() => {
                   setSearchField('');
                   setActiveUser(null);
+                  setFilterCategory([]);
                 }}
               >
                 Reset all filters
